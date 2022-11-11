@@ -2,8 +2,11 @@
 
 import csv
 import hashlib
+import os
 import os.path as path
 import random
+import glob
+import pandas as pd
 
 DIR = path.abspath(path.dirname(__file__))
 FILES = {
@@ -21,6 +24,26 @@ def write_file(writer, length, categories):
             random.choice(categories),
         ])
 
+# takes all the csv files in the fixtures folder and converts all the information to a pandas data frame, with the addition of the
+# filename column
+def read_files_to_data_frame():
+    directory_path = os.getcwd() + '\\fixtures'
+    files = glob.glob(directory_path + "\*.csv")
+    data_frame = pd.DataFrame()
+
+    for filename in files:
+        # reading content of csv file and add filename
+        df = pd.read_csv(filename, index_col=None)
+        df['filename'] = pd.Series([os.path.basename(filename) for x in range(len(df.index))])
+    
+        # appending to combined data frame
+        data_frame = data_frame.append(df)
+        
+    return data_frame
+
+def csv_combiner():
+    data_frame = read_files_to_data_frame()
+    data_frame.to_csv('combined.csv', index = False)
 
 def main():
     for fn, categories in FILES.items():
@@ -30,6 +53,7 @@ def main():
                 random.randint(100, 1000),
                 categories
             )
+    csv_combiner()
 
 
 if __name__ == '__main__':
