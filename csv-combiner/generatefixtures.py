@@ -5,10 +5,8 @@ import hashlib
 import os
 import os.path as path
 import random
-import glob
 import pandas as pd
 import sys
-import argparse
 
 DIR = path.abspath(path.dirname(__file__))
 FILES = {
@@ -34,13 +32,15 @@ def read_files_to_data_frame():
     for file in files:
         df = pd.read_csv(file, index_col=None)
         df['filename'] = pd.Series([os.path.basename(file) for x in range(len(df.index))])
-
-        data_frame = data_frame.append(df)
+        data_frame = pd.concat([data_frame, df])
     return data_frame
 
 def csv_combiner():
     data_frame = read_files_to_data_frame()
-    data_frame.to_csv('combined.csv', index = False)
+    if (sys.stdout.isatty()):
+        data_frame.to_csv('combined.csv', index = False)
+    else:
+        data_frame.to_csv(sys.stdout, index = False)
 
 def parse_cmd_line():
     n = len(sys.argv)
@@ -48,9 +48,6 @@ def parse_cmd_line():
     for i in range(1, n):
         file_inputs.append(sys.argv[i])
     return file_inputs
-    # parser = argparse.ArgumentParser()
-    # args = parser.parse_args()
-    # if args.Output:
 
 def main():
     for fn, categories in FILES.items():
@@ -61,7 +58,6 @@ def main():
                 categories
             )
     csv_combiner()
-    parse_cmd_line()
 
 
 if __name__ == '__main__':
