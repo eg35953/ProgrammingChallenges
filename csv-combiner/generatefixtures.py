@@ -27,8 +27,7 @@ def write_file(writer, length, categories):
 
 # takes all the csv files in the fixtures folder and converts all the information to a pandas data frame, with the addition of the
 # filename column
-def read_files_to_data_frame():
-    files = parse_cmd_line()
+def read_files_to_data_frame(files):
     data_frame = pd.DataFrame()
     for file in files:
         if (os.path.exists(file)):
@@ -39,7 +38,7 @@ def read_files_to_data_frame():
     return data_frame
 
 def csv_combiner():
-    data_frame = read_files_to_data_frame()
+    data_frame = read_files_to_data_frame(parse_cmd_line())
     if (sys.stdout.isatty()):
         data_frame.to_csv('combined.csv', index = False)
     else:
