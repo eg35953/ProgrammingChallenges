@@ -7,6 +7,7 @@ import os.path as path
 import random
 import pandas as pd
 import sys
+import pathlib
 
 DIR = path.abspath(path.dirname(__file__))
 FILES = {
@@ -30,9 +31,11 @@ def read_files_to_data_frame():
     files = parse_cmd_line()
     data_frame = pd.DataFrame()
     for file in files:
-        df = pd.read_csv(file, index_col=None)
-        df['filename'] = pd.Series([os.path.basename(file) for x in range(len(df.index))])
-        data_frame = pd.concat([data_frame, df])
+        if (os.path.exists(file)):
+            if (pathlib.Path(file).suffix == '.csv' and (os.path.getsize(file) != 0)):
+                df = pd.read_csv(file, index_col=None)
+                df['filename'] = pd.Series([os.path.basename(file) for x in range(len(df.index))])
+                data_frame = pd.concat([data_frame, df])
     return data_frame
 
 def csv_combiner():
