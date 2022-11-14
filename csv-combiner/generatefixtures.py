@@ -40,7 +40,7 @@ def csv_combiner():
     if (sys.stdout.isatty()):
         data_frame.to_csv('combined.csv', index = False)
     else:
-        data_frame.to_csv(sys.stdout, index = False)
+        data_frame.to_csv(sys.stdout, index = False, lineterminator = '\r')
 
 def parse_cmd_line():
     n = len(sys.argv)
